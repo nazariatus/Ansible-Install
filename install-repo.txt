@@ -1,0 +1,94 @@
+# встановлення
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt update
+sudo apt install ansible
+
+# перевірка
+python3 --version
+ansible --version
+
+# створення ключів
+cd .ssh/
+ssh-keygen
+# даємо назву ключу ansiblekey
+
+# копіюємо вміст створеного публічного ключа ansiblekey.pub в файл який знаходиться за шляхом "/home/ubuntu/.ssh/authorized_keys" на кожен сервер до якого нам потрібен доступ
+
+# налаштування inventory файлу hosts
+sudo nano /etc/ansible/hosts
+
+[servers]
+jenkins ansible_host=172.31.44.33 ansible_ssh_private_key_file=/home/ubuntu/.ssh/ansiblekey
+nexus ansible_host=172.31.35.20 ansible_ssh_private_key_file=/home/ubuntu/.ssh/ansiblekey
+consul1 ansible_host=172.31.44.77 ansible_ssh_private_key_file=/home/ubuntu/.ssh/ansiblekey
+consul2 ansible_host=172.31.36.251 ansible_ssh_private_key_file=/home/ubuntu/.ssh/ansiblekey
+consul3 ansible_host=172.31.37.65 ansible_ssh_private_key_file=/home/ubuntu/.ssh/ansiblekey
+
+# налаштуваання файлу конфігурації щоб не питало підтвердження при першому підключені
+sudo nano /etc/ansible/ansible.cfg
+
+[defaults]
+host_key_checking = false
+
+# перевіряємо вміст файлу hosts
+ansible-inventory --list -y
+
+all:
+  children:
+    servers:
+      hosts:
+        consul1:
+          ansible_host: 172.31.44.77
+          ansible_ssh_private_key_file: /home/ubuntu/.ssh/ansiblekey
+        consul2:
+          ansible_host: 172.31.36.251
+          ansible_ssh_private_key_file: /home/ubuntu/.ssh/ansiblekey
+        consul3:
+          ansible_host: 172.31.37.65
+          ansible_ssh_private_key_file: /home/ubuntu/.ssh/ansiblekey
+        jenkins:
+          ansible_host: 172.31.44.33
+          ansible_ssh_private_key_file: /home/ubuntu/.ssh/ansiblekey
+        nexus:
+          ansible_host: 172.31.35.20
+          ansible_ssh_private_key_file: /home/ubuntu/.ssh/ansiblekey
+    ungrouped: {}
+
+# перевіряємо підключення до серверів
+ansible all -m ping
+
+consul3 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+consul1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+nexus | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+jenkins | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+consul2 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
