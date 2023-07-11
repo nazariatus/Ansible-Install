@@ -5,6 +5,10 @@ ssh-keygen
 # копіюємо вміст публічного ключа ansiblekey.pub в файл "nano .ssh/authorized_keys" на сервері до якого ми хочемо логуватись з сервера Ansible
 nano .ssh/authorized_keys
 
+# З основного сервера на клієнський сервер у файл authorized_keys скопіювати вміст публічого ключа ansiblekey.pub можна наступною командою
+
+ssh-copy-id -i /home/nazar/ansiblekey.pub nazar@192.168.1.44
+
 # права доступу до файлу authorized_keys мають бути -rw------- і якщо вони не такі то їх треба змінити
 cd .ssh/
 chmod 0600 authorized_keys

@@ -12,7 +12,9 @@ cd .ssh/
 ssh-keygen
 # даємо назву ключу ansiblekey
 
-# копіюємо вміст створеного публічного ключа ansiblekey.pub в файл який знаходиться за шляхом "/home/ubuntu/.ssh/authorized_keys" на кожен сервер до якого нам потрібен доступ
+# копіюємо вміст створеного публічного ключа ansiblekey.pub в файл який знаходиться за шляхом "/home/ubuntu/.ssh/authorized_keys" на кожен сервер до якого нам потрібен доступ. Це можна зробити наступною командою
+
+ssh-copy-id -i /home/nazar/ansiblekey.pub nazar@192.168.1.44
 
 # налаштування inventory файлу hosts
 sudo nano /etc/ansible/hosts
